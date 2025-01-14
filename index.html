@@ -3,21 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamified Assignment App</title>
-    <script defer src="app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+    <title>Assignment App with Timers</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
             font-family: Arial, sans-serif;
         }
-        .hidden { display: none; }
-        .fade-in { animation: fadeIn 1s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        .overdue { color: red; font-weight: bold; }
         .glassmorphism {
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.1);
@@ -25,27 +18,14 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        #daily-quote {
-            font-size: 1.25rem;
-            font-style: italic;
-            color: #2d3748;
-            text-align: center;
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
     <header class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 text-center text-2xl">
-        Tech Assignment Module
+        Grade 9 Tech Assignment Module
     </header>
 
     <main class="container mx-auto p-4">
-        <!-- Daily Quote Section -->
-        <section id="daily-quote" class="glassmorphism p-4">
-            "There are 10 types of people in the world: those who understand binary and those who don't."
-        </section>
-
-        <!-- Login Section -->
         <section id="login-section" class="mb-6">
             <h2 class="text-2xl font-bold text-gray-800">Student Login</h2>
             <form id="login-form" class="mt-4 glassmorphism p-4">
@@ -56,37 +36,49 @@
             <p id="login-message" class="text-red-500 mt-2"></p>
         </section>
 
-        <!-- Assignments Section -->
-        <section id="assignments-section" class="hidden fade-in glassmorphism p-4">
+        <section id="assignments-section" class="hidden glassmorphism p-4">
             <h2 class="text-2xl font-bold text-gray-800">Welcome, <span id="username-display"></span>!</h2>
-            <p id="points" class="text-green-600 text-lg font-bold mt-2">Points: 0</p>
             <div id="assignment-list" class="mt-4"></div>
-        </section>
-
-        <!-- 3D Game Section -->
-        <section id="threejs-game-section" class="hidden fade-in glassmorphism p-4 mt-6">
-            <h2 class="text-2xl font-bold text-gray-800">3D Dynamic Object Clicking Challenge</h2>
-            <p class="text-gray-700 mt-2">Click on the target shapes before they disappear to earn points!</p>
-            <div id="threejs-canvas-container" class="w-full h-96 mt-4"></div>
         </section>
     </main>
 
     <footer class="bg-gray-800 text-white text-center p-4 mt-6">
-        &copy; 2025 Gamified Learning App
+        &copy; 2025 Assignment App
     </footer>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const loginSection = document.getElementById("login-section");
-            const assignmentsSection = document.getElementById("assignments-section");
-            const threeJsGameSection = document.getElementById("threejs-game-section");
             const loginForm = document.getElementById("login-form");
             const loginMessage = document.getElementById("login-message");
+            const loginSection = document.getElementById("login-section");
+            const assignmentsSection = document.getElementById("assignments-section");
             const usernameDisplay = document.getElementById("username-display");
-            const pointsDisplay = document.getElementById("points");
             const assignmentList = document.getElementById("assignment-list");
 
-            let points = 0;
+            const questions = [
+                "Research on Mordern day Cameras and the specifications.",
+                "Compare Nikon and Camon with Cameras.",
+                "Research the different resolution types.",
+                "Describe the difference between High frames per second and low frames per second.",
+                "Explore the role of Smartphones in Artifitial Inteligence.",
+                "Identify five types of features in smartphones.",
+                "Differentiate between desktop and laptops."
+            ];
+
+            let userName;
+            const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const assignedDays = getRandomDays(3); // Get 3 random days of the week
+
+            function getRandomDays(n) {
+                const days = [];
+                while (days.length < n) {
+                    const randomDay = weekdays[Math.floor(Math.random() * weekdays.length)];
+                    if (!days.includes(randomDay)) {
+                        days.push(randomDay);
+                    }
+                }
+                return days;
+            }
 
             loginForm.addEventListener("submit", (e) => {
                 e.preventDefault();
@@ -94,109 +86,132 @@
                 const password = document.getElementById("password").value.trim();
 
                 if (password === "grade9") {
+                    userName = username;
                     loginSection.classList.add("hidden");
                     assignmentsSection.classList.remove("hidden");
-                    threeJsGameSection.classList.remove("hidden");
-
                     usernameDisplay.textContent = username;
-                    localStorage.setItem("username", username);
                     setupAssignments();
-                    setupThreeJsGame();
                 } else {
                     loginMessage.textContent = "Invalid login credentials.";
                 }
             });
 
             function setupAssignments() {
-                const questions = [
-                    "Research on Desktop Computers and their uses.",
-                    "Compare Desktops and Laptops with examples.",
-                    "Introduction to Mainframes and Supercomputers.",
-                    "Create a chart summarizing Digital Devices.",
-                    "Explore the role of supercomputers in science.",
-                    "Identify five applications of mainframe computers.",
-                    "Discuss how laptops have evolved over the years."
-                ];
+                assignmentList.innerHTML = ""; // Clear any existing assignments
+                assignedDays.forEach((day, idx) => {
+                    const assignmentQuestions = getRandomQuestions(3);
+                    const dueTime = getDueDate(day);
 
-                const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-                const today = new Date().toLocaleString('en-US', { weekday: 'long' });
-                const weekNumber = 1; // Assuming it's week one
-                const term = "Term 2, 2024/2025";
+                    const assignmentDiv = document.createElement("div");
+                    assignmentDiv.className = "assignment bg-white p-4 shadow rounded mb-4";
 
-                assignmentList.innerHTML = days.map((day) => {
-                    if (day === today) {
-                        const dailyQuestions = questions.slice(0, 3).map((q, idx) => {
-                            const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-                            return `<li>${q} <span class='text-gray-500'>(Code: ${code})</span></li>`;
-                        }).join("");
+                    const dayHeader = document.createElement("h3");
+                    dayHeader.className = "text-xl font-bold";
+                    dayHeader.textContent = `${day} Assignments`;
 
-                        return `
-                            <div class='bg-white p-4 shadow rounded mb-4'>
-                                <strong>${term}, Week ${weekNumber}, ${day}</strong><br>
-                                <ul class='list-disc ml-6 mt-2'>
-                                    ${dailyQuestions}
-                                </ul>
-                            </div>
-                        `;
-                    }
-                    return '';
-                }).join("");
+                    const questionList = document.createElement("ul");
+                    questionList.className = "list-disc ml-6";
+                    assignmentQuestions.forEach((q) => {
+                        const li = document.createElement("li");
+                        li.textContent = q;
+                        questionList.appendChild(li);
+                    });
+
+                    const timer = document.createElement("p");
+                    timer.className = "text-gray-700 mt-2";
+                    timer.id = `timer-${idx}`;
+
+                    assignmentDiv.appendChild(dayHeader);
+                    assignmentDiv.appendChild(questionList);
+                    assignmentDiv.appendChild(timer);
+                    assignmentList.appendChild(assignmentDiv);
+
+                    updateTimer(day, dueTime, timer);
+                    setInterval(() => updateTimer(day, dueTime, timer), 1000);
+                });
             }
 
-            function setupThreeJsGame() {
-                const container = document.getElementById("threejs-canvas-container");
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-                const renderer = new THREE.WebGLRenderer();
+            function getRandomQuestions(n) {
+                const shuffled = [...questions].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, n);
+            }
+            function setupAssignments() {
+    assignmentList.innerHTML = ""; // Clear any existing assignments
+    const now = new Date();
+    const currentDay = weekdays[now.getDay() - 1]; // Adjust for Sunday (0 index)
+    
+    assignedDays.forEach((day, idx) => {
+        if (day === currentDay) {
+            const assignmentQuestions = getRandomQuestions(3);
+            const dueTime = getDueDate(day);
 
-                renderer.setSize(container.clientWidth, container.clientHeight);
-                container.appendChild(renderer.domElement);
+            const assignmentDiv = document.createElement("div");
+            assignmentDiv.className = "assignment bg-white p-4 shadow rounded mb-4";
 
-                const geometries = [
-                    new THREE.BoxGeometry(),
-                    new THREE.SphereGeometry(0.5, 32, 32),
-                    new THREE.ConeGeometry(0.5, 1, 32)
-                ];
+            const dayHeader = document.createElement("h3");
+            dayHeader.className = "text-xl font-bold";
+            dayHeader.textContent = `${day} Assignments`;
 
-                function createRandomObject() {
-                    const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-                    const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
-                    const object = new THREE.Mesh(geometry, material);
+            const questionList = document.createElement("ul");
+            questionList.className = "list-disc ml-6";
+            assignmentQuestions.forEach((q) => {
+                const li = document.createElement("li");
+                li.textContent = q;
+                questionList.appendChild(li);
+            });
 
-                    object.position.set(
-                        (Math.random() - 0.5) * 5,
-                        (Math.random() - 0.5) * 5,
-                        (Math.random() - 0.5) * 5
-                    );
+            const timer = document.createElement("p");
+            timer.className = "text-gray-700 mt-2";
+            timer.id = `timer-${idx}`;
 
-                    scene.add(object);
+            assignmentDiv.appendChild(dayHeader);
+            assignmentDiv.appendChild(questionList);
+            assignmentDiv.appendChild(timer);
+            assignmentList.appendChild(assignmentDiv);
 
-                    setTimeout(() => {
-                        if (scene.children.includes(object)) {
-                            scene.remove(object);
-                        }
-                    }, 1500);
+            updateTimer(day, dueTime, timer);
+            setInterval(() => updateTimer(day, dueTime, timer), 1000);
+        }
+    });
 
-                    object.addEventListener("click", () => {
-                        points += 20;
-                        pointsDisplay.textContent = `Points: ${points}`;
-                        scene.remove(object);
-                    });
+    if (assignmentList.innerHTML === "") {
+        const message = document.createElement("p");
+        message.className = "text-center text-gray-700 font-bold";
+        message.textContent = "No assignments available for today.";
+        assignmentList.appendChild(message);
+    }
+}
+
+
+            function getDueDate(day) {
+                const now = new Date();
+                const targetDayIndex = weekdays.indexOf(day);
+                const currentDayIndex = now.getDay();
+                let daysUntilDue = (targetDayIndex - currentDayIndex + 7) % 7;
+
+                if (daysUntilDue === 0 && now.getHours() >= 23) {
+                    daysUntilDue = 7; // Ensure the timer starts for next week's day
                 }
 
-                camera.position.z = 5;
+                const dueDate = new Date(now);
+                dueDate.setDate(now.getDate() + daysUntilDue);
+                dueDate.setHours(23, 59, 59, 999); // Set to the end of the target day
+                return dueDate;
+            }
 
-                function animate() {
-                    requestAnimationFrame(animate);
-                    scene.children.forEach((object) => {
-                        object.rotation.x += 0.01;
-                        object.rotation.y += 0.01;
-                    });
-                    renderer.render(scene, camera);
+            function updateTimer(day, dueTime, timerElement) {
+                const now = new Date();
+                const timeLeft = dueTime - now;
+
+                if (timeLeft <= 0) {
+                    timerElement.textContent = "Overdue!";
+                    timerElement.className = "overdue mt-2";
+                } else {
+                    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    timerElement.textContent = `Time remaining: ${hours}h ${minutes}m ${seconds}s`;
                 }
-
-                setInterval(createRandomObject, 1000);
-                animate();
             }
         });
     </script>
