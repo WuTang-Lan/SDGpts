@@ -3,217 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignment App with Timers</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
-            font-family: Arial, sans-serif;
-        }
-        .overdue { color: red; font-weight: bold; }
-        .glassmorphism {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <title>SdGpts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 text-center text-2xl">
-        Grade 9 Tech Assignment Module
+<body class="bg-gray-100 font-sans leading-normal tracking-normal"> 
+    <header class="bg-blue-500 p-4 text-white text-center">
+        <h1 class="text-2xl font-bold">Tech Assignment Module</h1>
+        <p id="daily-quote" class="text-lg mt-2 italic">"Technology is best when it brings people together." - Matt Mullenweg</p>
+        <nav class="mt-4">
+            <ul class="flex justify-center space-x-4">
+                <li><a href="#" class="text-white hover:underline">Home</a></li>
+                <li><a href="#about" class="text-white hover:underline">About</a></li>
+                <li><a href="#faqs" class="text-white hover:underline">FAQs</a></li>
+                <li><a href="#contact" class="text-white hover:underline">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <main class="container mx-auto p-4">
-        <section id="login-section" class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Student Login</h2>
-            <form id="login-form" class="mt-4 glassmorphism p-4">
-                <input type="text" id="username" placeholder="Enter your name" class="p-2 w-full mb-4 border rounded" required>
-                <input type="password" id="password" placeholder="Enter your password" class="p-2 w-full mb-4 border rounded" required>
-                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded">Login</button>
+    <!-- Login Page -->
+    <main id="login-page" class="container mx-auto my-8">
+        <div class="p-4 bg-white shadow rounded w-1/3 mx-auto">
+            <h2 class="text-xl font-semibold mb-4 text-center">Login</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="student-name" class="block text-gray-700">Student Name</label>
+                    <input type="text" id="student-name" class="w-full px-4 py-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="password" class="block text-gray-700">Password</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border rounded" required>
+                </div>
+                <button type="submit" class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Login</button>
             </form>
-            <p id="login-message" class="text-red-500 mt-2"></p>
-        </section>
-
-        <section id="assignments-section" class="hidden glassmorphism p-4">
-            <h2 class="text-2xl font-bold text-gray-800">Welcome, <span id="username-display"></span>!</h2>
-            <div id="assignment-list" class="mt-4"></div>
-        </section>
+        </div>
     </main>
 
-    <footer class="bg-gray-800 text-white text-center p-4 mt-6">
-        &copy; 2025 Assignment App
-    </footer>
+    <!-- Main Content Page -->
+    <main id="main-content" class="hidden container mx-auto my-8">
+        <div class="grid grid-cols-5 gap-4">
+            <aside class="col-span-1 bg-white shadow rounded p-4">
+                <h3 class="text-lg font-semibold mb-4">Grades</h3>
+                <ul class="space-y-2">
+                    <li><button onclick="displayAssignments('Grade 8')" class="w-full text-left text-blue-500 hover:underline">Grade 8</button></li>
+                    <li><button onclick="displayAssignments('Grade 9')" class="w-full text-left text-blue-500 hover:underline">Grade 9</button></li>
+                    <li><button onclick="displayAssignments('Grade 10')" class="w-full text-left text-blue-500 hover:underline">Grade 10</button></li>
+                </ul>
+            </aside>
+            <section class="col-span-4 bg-white shadow rounded p-4">
+                <h2 class="text-xl font-semibold mb-4">Assignments</h2>
+                <div id="assignments">
+                    <p class="text-gray-700 italic">Select a grade to view its assignments.</p>
+                </div>
+            </section>
+        </div>
+    </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const loginForm = document.getElementById("login-form");
-            const loginMessage = document.getElementById("login-message");
-            const loginSection = document.getElementById("login-section");
-            const assignmentsSection = document.getElementById("assignments-section");
-            const usernameDisplay = document.getElementById("username-display");
-            const assignmentList = document.getElementById("assignment-list");
+        const studentsActivity = [];
+        const universalPassword = "Pass123"; // Password for login
 
-            const questions = [
-                "Research on Mordern day Cameras and the specifications.",
-                "Compare Nikon and Camon with Cameras.",
-                "Research the different resolution types.",
-                "Describe the difference between High frames per second and low frames per second.",
-                "Explore the role of Smartphones in Artifitial Inteligence.",
-                "Identify five types of features in smartphones.",
-                "Differentiate between desktop and laptops."
-            ];
+        // Assignments for each grade
+           const assignmentsByGrade = {
+    "Grade 8": [
+        "Differentiate between Denary and Binary",
+        "Explain the structure of a Data Packet",
+        "Explain the steps taken to change a number from Binary to Denary and vice versa",
+        "Why is the binary system preferred in digital systems over denary?",
+        "List the components of a data packet and their functions.",
+        "What challenges might arise during manual binary-to-denary conversion?"
+    ],
+    "Grade 9": [
+        "State the Features of digital devices",
+        "Explore the use of sensors in digital devices",
+        "Identifying Key Components of Modern Gadgets",
+        "What are three essential features of smartphones, and why are they important?",
+        "Explain how accelerometers and gyroscopes are used in smartphones.",
+        "Compare the role of processors in smartphones versus laptops."
+    ],
+    "Grade 10": [
+        "Importance of Regular Software Updates",
+        "Explain the functions of the Operating Systems",
+        "Compare Open Source vs Proprietary Operating Systems",
+        "How do software updates improve security in digital systems?",
+        "How does an operating system manage hardware and software resources?",
+        "What are the advantages and disadvantages of using open-source operating systems like Linux?"
+    ]
+        };
 
-            let userName;
-            const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            const assignedDays = getRandomDays(3); // Get 3 random days of the week
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const studentName = document.getElementById('student-name').value;
+            const password = document.getElementById('password').value;
 
-            function getRandomDays(n) {
-                const days = [];
-                while (days.length < n) {
-                    const randomDay = weekdays[Math.floor(Math.random() * weekdays.length)];
-                    if (!days.includes(randomDay)) {
-                        days.push(randomDay);
-                    }
-                }
-                return days;
+            if (password !== universalPassword) {
+                alert("Incorrect password. Please try again.");
+                return;
             }
 
-            loginForm.addEventListener("submit", (e) => {
-                e.preventDefault();
-                const username = document.getElementById("username").value.trim();
-                const password = document.getElementById("password").value.trim();
+            const loginTime = new Date().toLocaleString();
+            
+            studentsActivity.push({ name: studentName, loginTime });
+            console.table(studentsActivity);
 
-                if (password === "grade9") {
-                    userName = username;
-                    loginSection.classList.add("hidden");
-                    assignmentsSection.classList.remove("hidden");
-                    usernameDisplay.textContent = username;
-                    setupAssignments();
-                } else {
-                    loginMessage.textContent = "Invalid login credentials.";
-                }
-            });
-
-            function setupAssignments() {
-                assignmentList.innerHTML = ""; // Clear any existing assignments
-                assignedDays.forEach((day, idx) => {
-                    const assignmentQuestions = getRandomQuestions(3);
-                    const dueTime = getDueDate(day);
-
-                    const assignmentDiv = document.createElement("div");
-                    assignmentDiv.className = "assignment bg-white p-4 shadow rounded mb-4";
-
-                    const dayHeader = document.createElement("h3");
-                    dayHeader.className = "text-xl font-bold";
-                    dayHeader.textContent = `${day} Assignments`;
-
-                    const questionList = document.createElement("ul");
-                    questionList.className = "list-disc ml-6";
-                    assignmentQuestions.forEach((q) => {
-                        const li = document.createElement("li");
-                        li.textContent = q;
-                        questionList.appendChild(li);
-                    });
-
-                    const timer = document.createElement("p");
-                    timer.className = "text-gray-700 mt-2";
-                    timer.id = `timer-${idx}`;
-
-                    assignmentDiv.appendChild(dayHeader);
-                    assignmentDiv.appendChild(questionList);
-                    assignmentDiv.appendChild(timer);
-                    assignmentList.appendChild(assignmentDiv);
-
-                    updateTimer(day, dueTime, timer);
-                    setInterval(() => updateTimer(day, dueTime, timer), 1000);
-                });
-            }
-
-            function getRandomQuestions(n) {
-                const shuffled = [...questions].sort(() => 0.5 - Math.random());
-                return shuffled.slice(0, n);
-            }
-            function setupAssignments() {
-    assignmentList.innerHTML = ""; // Clear any existing assignments
-    const now = new Date();
-    const currentDay = weekdays[now.getDay() - 1]; // Adjust for Sunday (0 index)
-    
-    assignedDays.forEach((day, idx) => {
-        if (day === currentDay) {
-            const assignmentQuestions = getRandomQuestions(3);
-            const dueTime = getDueDate(day);
-
-            const assignmentDiv = document.createElement("div");
-            assignmentDiv.className = "assignment bg-white p-4 shadow rounded mb-4";
-
-            const dayHeader = document.createElement("h3");
-            dayHeader.className = "text-xl font-bold";
-            dayHeader.textContent = `${day} Assignments`;
-
-            const questionList = document.createElement("ul");
-            questionList.className = "list-disc ml-6";
-            assignmentQuestions.forEach((q) => {
-                const li = document.createElement("li");
-                li.textContent = q;
-                questionList.appendChild(li);
-            });
-
-            const timer = document.createElement("p");
-            timer.className = "text-gray-700 mt-2";
-            timer.id = `timer-${idx}`;
-
-            assignmentDiv.appendChild(dayHeader);
-            assignmentDiv.appendChild(questionList);
-            assignmentDiv.appendChild(timer);
-            assignmentList.appendChild(assignmentDiv);
-
-            updateTimer(day, dueTime, timer);
-            setInterval(() => updateTimer(day, dueTime, timer), 1000);
-        }
-    });
-
-    if (assignmentList.innerHTML === "") {
-        const message = document.createElement("p");
-        message.className = "text-center text-gray-700 font-bold";
-        message.textContent = "No assignments available for today.";
-        assignmentList.appendChild(message);
-    }
-}
-
-
-            function getDueDate(day) {
-                const now = new Date();
-                const targetDayIndex = weekdays.indexOf(day);
-                const currentDayIndex = now.getDay();
-                let daysUntilDue = (targetDayIndex - currentDayIndex + 7) % 7;
-
-                if (daysUntilDue === 0 && now.getHours() >= 23) {
-                    daysUntilDue = 7; // Ensure the timer starts for next week's day
-                }
-
-                const dueDate = new Date(now);
-                dueDate.setDate(now.getDate() + daysUntilDue);
-                dueDate.setHours(23, 59, 59, 999); // Set to the end of the target day
-                return dueDate;
-            }
-
-            function updateTimer(day, dueTime, timerElement) {
-                const now = new Date();
-                const timeLeft = dueTime - now;
-
-                if (timeLeft <= 0) {
-                    timerElement.textContent = "Overdue!";
-                    timerElement.className = "overdue mt-2";
-                } else {
-                    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                    timerElement.textContent = `Time remaining: ${hours}h ${minutes}m ${seconds}s`;
-                }
-            }
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
         });
+
+        function displayAssignments(grade) {
+            const assignmentsContainer = document.getElementById('assignments');
+            const gradeAssignments = assignmentsByGrade[grade];
+
+            if (gradeAssignments) {
+                const assignmentList = gradeAssignments.map((assignment) => `<li>${assignment}</li>`).join('');
+                assignmentsContainer.innerHTML = `
+                    <h3 class="text-lg font-semibold mb-2">${grade} Assignments:</h3>
+                    <ul class="list-disc pl-6 mb-6">
+                        ${assignmentList}
+                    </ul>
+                `;
+            } else {
+                assignmentsContainer.innerHTML = `<p class="text-gray-700">No assignments available for ${grade}.</p>`;
+            }
+        }
     </script>
 </body>
 </html>
