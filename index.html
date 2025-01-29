@@ -93,6 +93,7 @@
                 if (selectedGrade) displayAssignments(selectedGrade);
             } else {
                 alert("Incorrect password. Try again.");
+                document.getElementById('login-form').reset(); // Reset form on failure
             }
         });
 
@@ -184,7 +185,7 @@
                         "What are different types of application software?",
                         "How does application software interact with system software?",
                         "What are the benefits of cloud-based application software?",
-                        "How does licensing work for application software?"
+                        "How does licensing work for application software?",
                         "What is instant Messaging?",
                         "What are the advantages of using Sms over mms?",
                         "What are the different types of communication softwares?",
