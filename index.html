@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Tech Assignment Module</title>
+    <title>Tech Assignment Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -12,170 +14,193 @@
                     colors: {
                         primary: '#4caf50',
                         secondary: '#f9a825',
-                        background: '#f5f5f5',
+                        background: '#1a1a1a',
                         accent: '#03a9f4',
-                    },
-                    animation: {
-                        fadeIn: 'fadeIn 1.5s ease-in-out',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: 0 },
-                            '100%': { opacity: 1 },
-                        },
-                    },
-                },
-            },
+                        card: '#2d2d2d',
+                    }
+                }
+            }
         };
     </script>
+    <style>
+        body { background: linear-gradient(135deg, #1a1a1a, #2d2d2d); min-height: 100vh; font-family: 'Poppins', sans-serif; }
+        .login-card { animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
-<body class="bg-background font-sans leading-normal tracking-normal">
-    <header class="bg-primary text-white p-6 text-center shadow-md">
-        <h1 class="text-3xl font-extrabold">Tech Assignment Portal</h1>
-        <p id="daily-quote" class="text-lg italic">"How rich are you? .I have got Compute,Electricity and Artificial Intelligence.  By SibilaDevOps & Ais."</p>
+<body class="bg-background text-white">
+    <header class="bg-card p-6 text-center shadow-lg">
+        <h1 class="text-3xl font-extrabold">SibilaDevOps Assignment Portal</h1>
         <nav class="mt-4 flex justify-center space-x-6">
-            <a href="#login-page" class="hover:underline">Login</a>
-            <a href="#register-page" class="hover:underline">Register</a>
-            <a href="#admin-panel" class="hover:underline">Admin Panel</a>
-            <a href="#faqs" class="hover:underline">FAQs</a>
+            <a href="#assignment-module" class="hover:text-accent">Assignments</a>
         </nav>
     </header>
-
-    <!-- Login Page -->
-    <main id="login-page" class="container mx-auto my-10 animate-fadeIn">
-        <div class="bg-gradient-to-r from-accent to-secondary p-8 shadow-lg rounded-xl max-w-lg mx-auto">
-            <h2 class="text-2xl font-bold text-white text-center mb-6">Student Login</h2>
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="student-name" class="block text-white font-medium">Student Name</label>
-                    <input type="text" id="student-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary" required>
-                </div>
-                <div>
-                    <label for="password" class="block text-white font-medium">Password</label>
-                    <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary" required>
-                </div>
-                <button type="submit" class="w-full py-3 bg-primary text-white font-semibold rounded-lg hover:bg-secondary transition duration-300">
-                    Login
-                </button>
-            </form>
-        </div>
-    </main>
-
-    <!-- Assignment Module -->
-    <main id="assignment-module" class="container mx-auto my-10 hidden animate-fadeIn">
-        <div class="p-6 bg-white shadow rounded-xl">
-            <h2 class="text-2xl font-semibold mb-6">Assignment Module</h2>
-            <p class="mb-6">Choose your grade to view assignments for Term 2 (Edexcel Pearson Curriculum):</p>
-            <ul class="grid grid-cols-2 gap-4">
-                <li><button onclick="displayAssignments('Grade 7')" class="w-full bg-primary text-white py-2 rounded hover:bg-secondary">Grade 7</button></li>
-                <li><button onclick="displayAssignments('Grade 8')" class="w-full bg-primary text-white py-2 rounded hover:bg-secondary">Grade 8</button></li>
-                <li><button onclick="displayAssignments('Grade 9')" class="w-full bg-primary text-white py-2 rounded hover:bg-secondary">Grade 9</button></li>
-                <li><button onclick="displayAssignments('Grade 10')" class="w-full bg-primary text-white py-2 rounded hover:bg-secondary">Grade 10</button></li>
+    
+    <main id="assignment-module" class="container mx-auto my-10 p-6">
+        <div class="bg-card p-8 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-semibold mb-6">Choose Your Grade</h2>
+            <ul class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <li><button onclick="checkLogin('Grade 7')" class="w-full bg-primary text-white py-2 rounded">Grade 7</button></li>
+                <li><button onclick="checkLogin('Grade 8')" class="w-full bg-primary text-white py-2 rounded">Grade 8</button></li>
+                <li><button onclick="checkLogin('Grade 9')" class="w-full bg-primary text-white py-2 rounded">Grade 9</button></li>
+                <li><button onclick="checkLogin('Grade 10')" class="w-full bg-primary text-white py-2 rounded">Grade 10</button></li>
             </ul>
             <div id="assignments" class="mt-6"></div>
         </div>
     </main>
-
-    <!-- Admin Panel -->
-    <main id="admin-panel" class="container mx-auto my-10 hidden animate-fadeIn">
-        <div class="bg-gradient-to-l from-primary to-secondary p-6 shadow-lg rounded-xl max-w-lg mx-auto">
-            <h2 class="text-2xl font-bold text-white text-center mb-6">Admin Panel</h2>
-            <form id="admin-login-form" class="space-y-6">
-                <div>
-                    <label for="admin-name" class="block text-white font-medium">Admin Name</label>
-                    <input type="text" id="admin-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary" required>
-                </div>
-                <div>
-                    <label for="admin-password" class="block text-white font-medium">Password</label>
-                    <input type="password" id="admin-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary" required>
-                </div>
-                <button type="submit" class="w-full py-3 bg-accent text-white font-semibold rounded-lg hover:bg-secondary transition duration-300">
-                    Login
-                </button>
+    
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center p-4">
+        <div class="bg-card p-8 rounded-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6">Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" required>
+                <input type="password" id="password" placeholder="Password" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" required>
+                <button type="submit" class="w-full bg-primary text-white py-2 rounded">Login</button>
             </form>
-            <div id="admin-stats" class="mt-8 hidden">
-                <h3 class="text-xl text-white font-semibold mb-4">Logged-in Students</h3>
-                <ul id="stats-list" class="list-disc text-white pl-5"></ul>
-            </div>
+            <button onclick="closeLoginModal()" class="mt-4 text-gray-400">Close</button>
         </div>
-    </main>
+    </div>
 
-    <!-- Script -->
     <script>
-        const studentsActivity = [];
-        const universalPassword = "technology";
-        const adminPassword = "admin123";
+        const correctPassword = "technology";
+        let isAuthenticated = false;
+        let selectedGrade = null;
+        
+        function checkLogin(grade) {
+            if (!isAuthenticated) {
+                document.getElementById('login-modal').classList.remove('hidden');
+                sessionStorage.setItem('pendingGrade', grade);
+            } else {
+                if (selectedGrade && selectedGrade !== grade) {
+                    isAuthenticated = false;
+                    alert("You need to log in again to access another grade.");
+                    document.getElementById('login-modal').classList.remove('hidden');
+                    sessionStorage.setItem('pendingGrade', grade);
+                } else {
+                    selectedGrade = grade;
+                    displayAssignments(grade);
+                }
+            }
+        }
 
-        const gradeAssignments = {
-            "Grade 7": [
-                "Explain the importance of ICT in modern education.",
-                "What are the components of a computer system?",
-                "Define input and output devices with examples.",
-                "Discuss the role of technology in daily life."
-            ],
-            "Grade 8": [
-                  "Explain the difference between hardware and software.",
-                 "What is binary code and how is it used?",
-                 "Discuss how the internet works and its key components.",
-                  "Describe the importance of cybersecurity.",   
-            ],
-            "Grade 9": [
-                "Describe the use of Sensors and its benefits.",
-                "Explain how smart home devices use sensors?",
-                "State 8 Devices that use sensors.",
-                "Explain the disadvantages of using sensors in Smart Homes."
-            ],
-            "Grade 10": [
-                "Describe any functions of a Kernel.",
-                "Explain the purpose of operating systems.",
-                "Differentiate between Windos and linux OS?",
-                "Discuss three types of Operating Systems and their features."
-            ]
-        };
-
-        // Handle student login
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const studentName = document.getElementById('student-name').value;
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
             const password = document.getElementById('password').value;
-
-            if (password !== universalPassword) {
-                alert("Incorrect password. Please try again.");
-                return;
+            if (password === correctPassword) {
+                isAuthenticated = true;
+                document.getElementById('login-modal').classList.add('hidden');
+                selectedGrade = sessionStorage.getItem('pendingGrade');
+                if (selectedGrade) displayAssignments(selectedGrade);
+            } else {
+                alert("Incorrect password. Try again.");
             }
-
-            const loginTime = new Date().toLocaleString();
-            studentsActivity.push({ name: studentName, grade: null, loginTime });
-            document.getElementById('login-page').classList.add('hidden');
-            document.getElementById('assignment-module').classList.remove('hidden');
         });
 
-        // Handle admin login
-        document.getElementById('admin-login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const adminName = document.getElementById('admin-name').value;
-            const password = document.getElementById('admin-password').value;
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
 
-            if (password !== adminPassword) {
-                alert("Incorrect admin password.");
-                return;
-            }
-
-            document.getElementById('admin-stats').classList.remove('hidden');
-            const statsList = document.getElementById('stats-list');
-            statsList.innerHTML = studentsActivity.map(student => `<li>${student.name} (Login: ${student.loginTime})</li>`).join('');
-        });
-
-        // Display assignments
         function displayAssignments(grade) {
+            const assignments = {
+                "Grade 7": {
+                    "Wenesday": [
+                        "What is internet filtering?",
+                        "Why do schools and businesses use internet filtering?",
+                        "What are common methods of internet filtering?",
+                        "Can internet filtering be bypassed? How?",
+                        "What are the ethical concerns of internet filtering?"
+                    ],
+                    "Friday": [
+                        "What is the difference between a web browser and a search engine?",
+                        "Name three popular web browsers and three popular search engines.",
+                        "How does a search engine index web pages?",
+                        "Why might search results differ between search engines?",
+                        "What are some tips for using search engines effectively?"
+                    ],
+                    "Personal Revision": [
+                        "What does SEO stand for?",
+                        "How can companies use SEO to improve website ranking?",
+                        "What is keyword stuffing and why is it bad?",
+                        "What are black-hat and white-hat SEO techniques?",
+                        "How does Google's algorithm impact SEO strategies?"
+                    ]
+                },
+                "Grade 8": {
+                    "Wednesday": [
+                        "What is the binary number system?",
+                        "How do you convert a binary number to decimal?",
+                        "What is the purpose of binary numbers in computing?",
+                        "What is a bit and a byte?",
+                        "How are binary numbers used in text encoding?"
+                    ],
+                    "CAT Boost Questions": [
+                        "What is a data packet?",
+                        "Why is data broken into packets for transmission?",
+                        "What information does a data packet contain?",
+                        "How does packet switching work?",
+                        "What happens if a data packet is lost during transmission?"
+                        "What factors affect internet speed?",
+                        "What is the difference between download and upload speeds?",
+                        "How is internet speed measured?",
+                        "What role does bandwidth play in internet speed?",
+                        "What is latency and how does it impact internet performance?"
+                    ]
+                },
+                "Grade 9": {
+                    "Wednesday": [
+                        "What are examples of digital devices?",
+                        "How do digital devices communicate with each other?",
+                        "What is the impact of digital devices on society?",
+                        "What is the difference between analog and digital devices?",
+                        "How do sensors play a role in digital devices?"
+                    ],
+                    "Friday": [
+                        "What does IoT stand for?",
+                        "How do IoT devices communicate?",
+                        "What are some examples of IoT applications?",
+                        "What are security risks associated with IoT?",
+                        "How is data collected and used in IoT networks?"
+                    ],
+                    "Personal Revision": [
+                        "What is cybersecurity?",
+                        "What are common cyber threats?",
+                        "How can individuals protect themselves from cyber attacks?",
+                        "What is phishing and how can it be avoided?",
+                        "Why is strong password management important?"
+                    ]
+                },
+                "Grade 10": {
+                    "System Software": [
+                        "What is system software?",
+                        "What are the functions of an operating system?",
+                        "What is the difference between system software and application software?",
+                        "How does system software manage hardware resources?",
+                        "What are examples of system software besides an OS?"
+                    ],
+                    "Application Software": [
+                        "What is application software?",
+                        "What are different types of application software?",
+                        "How does application software interact with system software?",
+                        "What are the benefits of cloud-based application software?",
+                        "How does licensing work for application software?"
+                    ],
+                    "Personal Revision": [
+                        "What is cloud computing?",
+                        "What are the advantages of cloud computing?",
+                        "What are the different types of cloud computing services?",
+                        "What are security risks in cloud computing?",
+                        "How does cloud computing impact businesses?"
+                    ]
+                }
+            };
+
             const assignmentsContainer = document.getElementById('assignments');
-            const questions = gradeAssignments[grade];
-
-            studentsActivity[studentsActivity.length - 1].grade = grade;
-
-            assignmentsContainer.innerHTML = `
-                <h3 class="text-lg font-semibold mb-4">${grade} Assignments:</h3>
-                <ul class="list-disc pl-5">${questions.map(q => `<li>${q}</li>`).join('')}</ul>`;
+            const gradeAssignments = assignments[grade];
+            assignmentsContainer.innerHTML = `<h3 class='text-xl font-bold mb-4'>${grade} Assignments</h3>` +
+                Object.keys(gradeAssignments).map(subject => {
+                    return `<h4 class="font-semibold mt-4">${subject}</h4>` +
+                        gradeAssignments[subject].map(item => `<p>- ${item}</p>`).join('');
+                }).join('');
         }
     </script>
 </body>
