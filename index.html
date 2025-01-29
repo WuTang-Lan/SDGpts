@@ -45,7 +45,7 @@
                 <li><button onclick="checkLogin('Grade 9')" class="w-full bg-primary text-white py-2 rounded">Grade 9</button></li>
                 <li><button onclick="checkLogin('Grade 10')" class="w-full bg-primary text-white py-2 rounded">Grade 10</button></li>
             </ul>
-            <div id="assignments" class="mt-6"></div>
+            <div id="assignments" class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
     </main>
     
@@ -93,7 +93,6 @@
                 if (selectedGrade) displayAssignments(selectedGrade);
             } else {
                 alert("Incorrect password. Try again.");
-                document.getElementById('login-form').reset(); // Reset form on failure
             }
         });
 
@@ -197,10 +196,17 @@
 
             const assignmentsContainer = document.getElementById('assignments');
             const gradeAssignments = assignments[grade];
+
             assignmentsContainer.innerHTML = `<h3 class='text-xl font-bold mb-4'>${grade} Assignments</h3>` +
                 Object.keys(gradeAssignments).map(subject => {
-                    return `<h4 class="font-semibold mt-4">${subject}</h4>` +
-                        gradeAssignments[subject].map(item => `<p>- ${item}</p>`).join('');
+                    return `<div class="bg-card p-4 rounded-lg shadow-lg mb-4">
+                        <h4 class="font-semibold text-lg mb-2">${subject}</h4>` +
+                        gradeAssignments[subject].map(item => {
+                            return `<div class="bg-gray-800 p-4 rounded-lg mb-2">
+                                <p class="text-sm text-gray-400">- ${item}</p>
+                            </div>`;
+                        }).join('') + 
+                    `</div>`;
                 }).join('');
         }
     </script>
